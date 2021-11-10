@@ -1,0 +1,336 @@
+package tictactoe;
+
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.Random;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        String firstLine = "_________";
+
+        char[] untouchedTable = new char[9];
+        char[][] gameTable = new char[3][3];
+
+        //creating game table
+        generateGameTable(firstLine, untouchedTable, gameTable);
+        printGameTable(gameTable);
+
+        //bot variables
+        Random rand = new Random();
+        int botI = 0;
+        int botJ = 0;
+        boolean botDecided = false;
+        int randCounter = 0;
+
+        //running the game
+        while (true) {
+
+            //player one
+            humanPlays(gameTable, 'X');
+            //printing game table
+            printGameTable(gameTable);
+            //checking a winner
+            if(isThereAWinner(gameTable)) {
+                break;
+            }
+
+            //player two
+            humanPlays(gameTable, 'O');
+            //printing game table
+            printGameTable(gameTable);
+            //checking a winner
+            if(isThereAWinner(gameTable)) {
+                break;
+            }
+        }
+
+//            //bot plays
+//            System.out.println("Making move level \"easy\"");
+//            while (!botDecided) {
+//                randCounter = rand.nextInt(64);
+//                for (int i = 0; i < randCounter; i++ ) {
+//                    botI = rand.nextInt(3);
+//                }
+//                randCounter = rand.nextInt(128);
+//                for (int i = 0; i < randCounter; i++ ) {
+//                    botJ = rand.nextInt(3);
+//                }
+//
+//                if (Objects.equals(gameTable[botI][botJ], 'X') ||
+//                        Objects.equals(gameTable[botI][botJ], 'O')) {
+//                    botDecided = false;
+//                } else {
+//                    gameTable[botI][botJ] = 'O';
+//                    botDecided = true;
+//                }
+//            }
+//
+//            //printing after bot
+//            printGameTable(gameTable);
+//            //reseting bot
+//            botDecided = false;
+
+    }
+
+    public static boolean isThereEmpty (char[][] toBeAnalyzed) {
+        boolean answer = false;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (Objects.equals(toBeAnalyzed[i][j], ' ')) {
+                    answer = true;
+                    break;
+                }
+            }
+            if (answer) {
+                break;
+            }
+        }
+        return answer;
+    }
+
+    public static boolean thisWins (char[][] toBeChecked, char symbol) {
+        //horizontal counting
+        if (Objects.equals(toBeChecked[0][0], symbol) &&
+                Objects.equals(toBeChecked[0][1], symbol) &&
+                Objects.equals(toBeChecked[0][2], symbol)) {
+            return true;
+        } else if (Objects.equals(toBeChecked[1][0], symbol) &&
+                Objects.equals(toBeChecked[1][1], symbol) &&
+                Objects.equals(toBeChecked[1][2], symbol)) {
+            return true;
+        } else if (Objects.equals(toBeChecked[2][0], symbol) &&
+                Objects.equals(toBeChecked[2][1], symbol) &&
+                Objects.equals(toBeChecked[2][2], symbol)) {
+            return true;
+        } //vertical counting
+        else if (Objects.equals(toBeChecked[0][0], symbol) &&
+                Objects.equals(toBeChecked[1][0], symbol) &&
+                Objects.equals(toBeChecked[2][0], symbol)) {
+            return true;
+        } else if (Objects.equals(toBeChecked[0][1], symbol) &&
+                Objects.equals(toBeChecked[1][1], symbol) &&
+                Objects.equals(toBeChecked[2][1], symbol)) {
+            return true;
+        } else if (Objects.equals(toBeChecked[0][2], symbol) &&
+                Objects.equals(toBeChecked[1][2], symbol) &&
+                Objects.equals(toBeChecked[2][2], symbol)) {
+            return true;
+        } //diagonal counting
+        else if (Objects.equals(toBeChecked[0][0], symbol) &&
+                Objects.equals(toBeChecked[1][1], symbol) &&
+                Objects.equals(toBeChecked[2][2], symbol)) {
+            return true;
+        } else if (Objects.equals(toBeChecked[0][2], symbol) &&
+                Objects.equals(toBeChecked[1][1], symbol) &&
+                Objects.equals(toBeChecked[2][0], symbol)) {
+            return true;
+        } else return false;
+    }
+
+    public static char nextChar (char[][] toBeCounted) {
+        int XTotal = 0;
+        int OTotal = 0;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (Objects.equals(toBeCounted[i][j], 'X')) {
+                    XTotal++;
+                } else if (Objects.equals(toBeCounted[i][j], 'O')) {
+                    OTotal++;
+                }
+            }
+        }
+        if (XTotal > OTotal) {
+            return 'O';
+        } else {
+            return 'X';
+        }
+    }
+
+    public static boolean extraChar (char[][] toBeCounted) {
+        int XTotal = 0;
+        int OTotal = 0;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (Objects.equals(toBeCounted[i][j], 'X')) {
+                    XTotal++;
+                } else if (Objects.equals(toBeCounted[i][j], 'O')) {
+                    OTotal++;
+                }
+            }
+        }
+        if (XTotal - OTotal >= 2) {
+            return true;
+        } else if (OTotal - XTotal >= 2) {
+            return true;
+        } else return false;
+    }
+
+    public static void generateGameTable (String line, char[] slate, char[][] table) {
+        for (int i = 0; i < 9; i++) {
+            if (!(Objects.equals(line.charAt(i), '_'))) {
+                slate[i] = line.charAt(i);
+            } else {
+                slate[i] = ' ';
+            }
+        }
+
+        //creating game table
+        int k = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (i == 1) {
+                    k = 3;
+                } else if (i == 2) {
+                    k = 6;
+                }
+                table[i][j] = slate[k + j];
+            }
+        }
+    }
+
+    public static void printGameTable (char[][] toBePrinted) {
+        System.out.println("---------");
+        for (int i = 0; i < 3; i++) {
+            //sidewalls
+            System.out.print("| ");
+            for (int j = 0; j < 3; j++) {
+                System.out.print(toBePrinted[i][j] + " ");
+            }
+            //sidewalls and \n
+            System.out.println("|");
+        }
+        //bottom limit
+        System.out.println("---------");
+    }
+
+    public static boolean matchesNumber(char number, char[] numberArray) {
+        for (char c : numberArray) {
+            //System.out.println(c + " é igual a " + number + " ?" + (c == number ? " sim":" nao"));
+            if (c == number){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static int[] characterCounter(char[] numberInput, char[] numberCollection) {
+        int charTotal = 0;
+        int numberTotal = 0;
+        int notNumberTotal = 0;
+        int[] answer = new int[3];
+        for (char eachCharacter : numberInput) {
+            charTotal++;
+            answer[0] = charTotal;
+
+            if (matchesNumber(eachCharacter, numberCollection)) {
+                numberTotal++;
+                answer[1] = numberTotal;
+                //notAnyNumber = false;
+            } else {
+                notNumberTotal++;
+                answer[2] = notNumberTotal;
+                //notAnyNumber = true;
+            }
+        }
+        return answer;
+    }
+
+    public static boolean charBlocker(char[] numberInput, char[] numberCollection) {
+        int charTotal = 0;
+        int numberTotal = 0;
+        int notNumberTotal = 0;
+        int[] answer = new int[3];
+
+        boolean finalAnswer = false;
+
+        for (char eachCharacter : numberInput) {
+            charTotal++;
+            answer[0] = charTotal;
+
+            if (matchesNumber(eachCharacter, numberCollection)) {
+                numberTotal++;
+                answer[1] = numberTotal;
+                //notAnyNumber = false;
+            } else {
+                notNumberTotal++;
+                answer[2] = notNumberTotal;
+                //notAnyNumber = true;
+            }
+        }
+        if (answer[2] > 0){
+            finalAnswer = true;
+        }
+        return finalAnswer;
+    }
+
+    //input checking while
+    public static void humanPlays(char[][] tableGame, char XorO) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        String userString = "";
+        String[] splitUser = new String[10];
+
+        char[] allNumbers = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ' '};
+
+        boolean inputNotSatisfied = true;
+
+        int Icd = 0;
+        int Jcd = 0;
+        int[] intAnswer =new int[2];
+
+        while (inputNotSatisfied) {
+            System.out.println("Enter the coordinates: ");
+            userString = scanner.nextLine();
+
+            //input treatment
+            char[] userCharacters = userString.toCharArray();
+            System.out.println(userCharacters);
+            if (charBlocker(userCharacters, allNumbers)) {
+                System.out.println("You should enter numbers!");
+
+            } else {
+
+                userString = userString.trim();
+                splitUser = userString.split(" ");
+                Icd = Integer.parseInt(splitUser[0]);
+                Jcd = Integer.parseInt(splitUser[1]);
+
+                if ((Icd > 3 || Icd < 1 || Jcd > 3 || Jcd < 1)){
+                    System.out.println("Coordinates should be from 1 to 3!");
+                } else {
+
+                    if ((tableGame[Icd-1][Jcd-1] != ' ')){
+                        System.out.println("This cell is occupied! Choose another one!");
+                    } else {
+
+                        inputNotSatisfied = false;
+                    }
+                }
+            }
+        }
+
+        tableGame[Icd-1][Jcd-1] = XorO;
+    }
+
+    //counting the winner
+    public static boolean isThereAWinner(char[][] tableGame){
+
+        if (thisWins(tableGame, 'X')) {
+            System.out.println("X wins");
+            return true;
+        } else if (thisWins(tableGame, 'O')) {
+            System.out.println("O wins");
+            return true;
+        } else if (!isThereEmpty(tableGame)) {
+            System.out.println("Draw");
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
